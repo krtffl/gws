@@ -35,6 +35,7 @@ func (rep *gwsRepo) List() (
 			&gws.From,
 			&gws.Message,
 			&gws.Memory,
+			&gws.CreatedAt,
 		); err != nil {
 			return nil, handleErrors(err)
 		}
@@ -56,7 +57,11 @@ func (rep *gwsRepo) Create(gws *domain.GWS) (
 		gws.From,
 		gws.Message,
 		gws.Memory,
-	).Scan(&gws.Id, &gws.From, &gws.Message, &gws.Memory)
+	).Scan(&gws.Id,
+		&gws.From,
+		&gws.Message,
+		&gws.Memory,
+		&gws.CreatedAt)
 	if err != nil {
 		return nil, handleErrors(err)
 	}

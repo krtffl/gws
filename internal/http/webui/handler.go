@@ -1,6 +1,7 @@
 package webui
 
 import (
+	"encoding/base64"
 	"io"
 	"net/http"
 	"text/template"
@@ -11,6 +12,12 @@ import (
 	"github.com/krtffl/get-well-soon/internal/domain"
 	"github.com/krtffl/get-well-soon/internal/logger"
 )
+
+type Content struct {
+	From    string `json:"from"`
+	Message string `json:"message"`
+	Memory  string `json:"memory"`
+}
 
 type Handler struct {
 	svc      *Service
@@ -104,7 +111,7 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 		gws.Memory = m
 	}
 
-	_, err = h.svc.Create(gws)
+	uploadedGWS, err := h.svc.Create(gws)
 	if err != nil {
 		logger.Error("[WebuiHandler - Content - Upload] Couldn't create gws. %v", err)
 		h.template.ExecuteTemplate(w, "error.html", nil)
@@ -114,7 +121,16 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
-	if err := h.template.ExecuteTemplate(buf, "uploaded.html", nil); err != nil {
+	m := ""
+	if len(uploadedGWS.Memory) > 0 {
+		m = base64.RawStdEncoding.EncodeToString(uploadedGWS.Memory)
+	}
+
+	if err := h.template.ExecuteTemplate(buf, "uploaded.html", Content{
+		From:    uploadedGWS.From,
+		Message: uploadedGWS.Message,
+		Memory:  m,
+	}); err != nil {
 		logger.Error("[WebuiHandler - Content - Upload] Couldn't execute template. %v", err)
 		h.template.ExecuteTemplate(w, "error.html", nil)
 		return
