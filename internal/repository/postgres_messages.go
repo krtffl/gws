@@ -20,7 +20,7 @@ func (rep *gwsRepo) List() (
 	[]*domain.GWS, error,
 ) {
 	rows, err := rep.db.Query(
-		`SELECT * FROM "Messages"`,
+		`SELECT * FROM "Messages" ORDER BY "CreatedAt" DESC`,
 	)
 	if err != nil {
 		return nil, handleErrors(err)

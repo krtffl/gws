@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"text/template"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/oxtoacart/bpool"
@@ -13,25 +14,31 @@ import (
 	"github.com/krtffl/get-well-soon/internal/logger"
 )
 
+type Memories struct {
+	GWSs []*Content
+}
+
 type Content struct {
-	From    string `json:"from"`
-	Message string `json:"message"`
-	Memory  string `json:"memory"`
+	From    string    `json:"from"`
+	Message string    `json:"message"`
+	Memory  string    `json:"memory"`
+	Date    time.Time `json:"date"`
 }
 
 type Handler struct {
-	svc      *Service
-	template *template.Template
-	bpool    *bpool.BufferPool
+	svc       *Service
+	template  *template.Template
+	bpool     *bpool.BufferPool
+	challenge []string
 }
 
-func NewHandler(svc *Service, bpool *bpool.BufferPool) *Handler {
+func NewHandler(svc *Service, bpool *bpool.BufferPool, challenge []string) *Handler {
 	tmpls, err := template.New("").ParseGlob("public/templates/*.html")
 	if err != nil {
 		logger.Fatal("[WebuiHandler - Content] - Failed to parse templates. %v", err)
 	}
 
-	return &Handler{template: tmpls, svc: svc, bpool: bpool}
+	return &Handler{template: tmpls, svc: svc, bpool: bpool, challenge: challenge}
 }
 
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
@@ -129,6 +136,7 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 	if err := h.template.ExecuteTemplate(buf, "uploaded.html", Content{
 		From:    uploadedGWS.From,
 		Message: uploadedGWS.Message,
+		Date:    uploadedGWS.CreatedAt,
 		Memory:  m,
 	}); err != nil {
 		logger.Error("[WebuiHandler - Content - Upload] Couldn't execute template. %v", err)
@@ -138,4 +146,77 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 
 	buf.WriteTo(w)
 	return
+}
+
+func (h *Handler) SolveChallenge(w http.ResponseWriter, r *http.Request) {
+	logger.Info("[WebuiHandler - Content - SolveChallenge] Incoming request")
+
+	challenge := r.FormValue("challenge")
+
+	buf := h.bpool.Get()
+	defer h.bpool.Put(buf)
+
+	if !hasSolved(challenge, h.challenge) {
+		logger.Info("[WebuiHandler - Content - SolveChallenge] Failed challenge: %s", challenge)
+		if err := h.template.ExecuteTemplate(buf, "failed.html", nil); err != nil {
+			logger.Error(
+				"[WebuiHandler - Content - SolveChallenge] Couldn't execute template. %v",
+				err,
+			)
+			h.template.ExecuteTemplate(w, "failed.html", nil)
+			return
+		}
+
+		buf.WriteTo(w)
+		return
+	}
+
+	logger.Info("[WebuiHandler - Content - SolveChallenge] Solved challenge: %s", challenge)
+
+	gwss, err := h.svc.List()
+	if err != nil {
+		h.template.ExecuteTemplate(w, "error.html", nil)
+		return
+	}
+
+	var memories []*Content
+	for _, gws := range gwss {
+		c := &Content{
+			From:    gws.From,
+			Message: gws.Message,
+			Date:    gws.CreatedAt,
+		}
+
+		m := ""
+		if len(gws.Memory) > 0 {
+			m = base64.RawStdEncoding.EncodeToString(gws.Memory)
+		}
+
+		c.Memory = m
+		memories = append(memories, c)
+	}
+
+	if err := h.template.ExecuteTemplate(buf, "memories.html", Memories{
+		GWSs: memories,
+	}); err != nil {
+		logger.Error(
+			"[WebuiHandler - Content - SolveChallenge] Couldn't execute template. %v",
+			err,
+		)
+		h.template.ExecuteTemplate(w, "error.html", nil)
+		return
+	}
+
+	buf.WriteTo(w)
+	return
+}
+
+func hasSolved(send string, challenge []string) bool {
+	for _, ch := range challenge {
+		if send == ch {
+			return true
+		}
+	}
+
+	return false
 }

@@ -53,6 +53,7 @@ func (srv *Server) Run() error {
 		r.Get("/form", srv.handler.Form)
 		r.Post("/form", srv.handler.Upload)
 		r.Get("/challenge", srv.handler.Challenge)
+		r.Post("/challenge", srv.handler.SolveChallenge)
 	})
 
 	fs := http.FileServer(http.Dir("public"))

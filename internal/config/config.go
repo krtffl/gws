@@ -18,7 +18,8 @@ const (
 
 type Config struct {
 	// Global configuration
-	Port uint `mapstructure:"port" yaml:"port"`
+	Port      uint     `mapstructure:"port"      yaml:"port"`
+	Challenge []string `mapstructure:"challenge" yaml:"challenge"`
 
 	// Database configuration
 	Database Database `mapstructure:"database" yaml:"database"`

@@ -38,7 +38,7 @@ func New(cfg *config.Config) *GWS {
 	// A buffer pool is created to safely check template
 	// execution and properly handle the errors
 	bpool := bpool.NewBufferPool(64)
-	handler := webui.NewHandler(svc, bpool)
+	handler := webui.NewHandler(svc, bpool, cfg.Challenge)
 
 	httpServer := http.New(
 		cfg.Port,
