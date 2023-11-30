@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="icon" href="public/favicon.ico" type="image/x-icon"> -->
+    <link rel="icon" href="public/favicon.ico" type="image/x-icon">
     <script src="https://unpkg.com/htmx.org@1.9.4" integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV" crossorigin="anonymous"></script>
 </body>
     <title>ànims clara!</title>
@@ -12,6 +12,8 @@
             font-family: 'Roboto', sans-serif;
             background-color: #e7c6ff;
             margin: 0;
+            padding: 0;
+            overflow: hidden;
             color: #000814;
             font-size: 26px;
             text-align: center;
@@ -101,6 +103,21 @@
             height: auto;
             margin: 0 auto;
         }
+        .piquetona {
+            position: absolute;
+            top: 40%;
+            left: 0;
+            transform: rotate(90deg);
+            width: 40%;
+            height: auto;
+        }
+        .xula{
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -112,7 +129,10 @@
             <div class="square" hx-get="/challenge" hx-trigger="click" hx-target=".container">
                 <div>sóc la clara</div>
             </div>
+    <img src="public/images/piquetona.png" alt="la clara piquetona" class="piquetona">
+        </div>
+    <img src="public/images/xula.png" alt="la clara xula" class="xula">
     </div>
-    </div>
+
 </body>
 </html>
