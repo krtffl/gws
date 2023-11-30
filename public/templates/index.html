@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="public/favicon.ico" type="image/x-icon">
     <script src="https://unpkg.com/htmx.org@1.9.4" integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/disable-element.js"></script>
 </body>
     <title>ànims clara!</title>
     <style>
@@ -47,6 +48,7 @@
             transition: transform 0.2s ease-in-out;
             border: 2px solid #c8b6ff;
             border-radius: 10px;
+            cursor: pointer;
         }
         .square:hover {
             transform: scale(1.15);
@@ -118,6 +120,30 @@
             width: 40%;
             height: auto;
         }
+        .hidden {
+            display: hidden;
+        }
+        .my-indicator{
+            display:none;
+        }
+        .htmx-request .my-indicator{
+            display:inline;
+        }
+        .htmx-request.my-indicator{
+            display:inline;
+        }
+        svg{
+            width: 100px;
+            height: 100px;
+            display:inline-block;
+        }
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-itens: center;
+            margin: 10px;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -133,6 +159,5 @@
         </div>
     <img src="public/images/xula.png" alt="la clara xula" class="xula">
     </div>
-
 </body>
 </html>
