@@ -1,0 +1,19 @@
+ <div class="container">
+     <form hx-post="/form" hx-target=".container" enctype="multipart/form-data">
+     <div class="label-input">
+        <label for="from">De part de</label>
+        <input type="text" id="from" name="from" placeholder="Dídac" required />
+     </div>
+     <div class="label-input">
+        <label for="message">Missatge</label>
+        <textarea id="message" name="message" placeholder="hola clara..."></textarea>
+     </div>
+     <div class="label-input">
+        <label for="memory">Si vols pots pujar una imatge</label>
+        <input type="file" accept="image/jpeg, image/jpg, image/png" id="memory" name="memory">
+     </div>
+     <div>
+       <button class="form-btn" type="submit">Envia</button> 
+     </div>
+     </form>
+ </div>

@@ -1,0 +1,23 @@
+##############################################################
+# Global server configuration
+##############################################################
+port: "2224"
+
+##############################################################
+# Database
+##############################################################
+database:
+  host: localhost
+  port: 5432
+  user: myUser
+  password: myPassword
+  name: databaseName
+  ssl: disable #require, verify-full, verify-ca, disable  
+
+##############################################################
+# Logger 
+##############################################################
+logger:
+  format: json 
+  level: info 
+  path: logs/gws.log 
