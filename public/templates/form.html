@@ -1,31 +1,24 @@
  <div class="container" hx-ext="loading-states">
-     <form hx-post="/form" hx-target=".container" hx-indicator="#spinner" hx-ext="disable-element" hx-disable-element="#to-disable" enctype="multipart/form-data">
+   <form hx-post="/form" hx-target=".container" hx-indicator="#spinner" hx-ext="disable-element" hx-disable-element="#to-disable" enctype="multipart/form-data">
      <div class="label-input">
-        <label for="from">De part de</label>
-        <input type="text" id="from" name="from" placeholder="Dídac" required />
+       <label for="from">De part de</label>
+       <input type="text" id="from" name="from" placeholder="Dídac" required />
      </div>
      <div class="label-input">
-        <label for="message">Missatge</label>
-        <textarea id="message" name="message" placeholder="hola clara..." required></textarea>
+       <label for="message">Missatge</label>
+       <textarea id="message" name="message" placeholder="hola clara..." required></textarea>
      </div>
      <div class="label-input">
-        <label for="memory">Si vols pots pujar una imatge</label>
-        <input type="file" accept="image/jpeg, image/jpg, image/png" id="memory" name="memory">
+       <label for="memory">Si vols pots pujar una imatge</label>
+       <input type="file" accept="image/jpeg, image/jpg, image/png" id="memory" name="memory">
      </div>
      <div class="spinner-container">
-       <button id="to-disable" class="form-btn" type="submit">Envia</button> 
-        <svg class="my-indicator" version="1.1" id="spinner" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
-            <path fill="#e76f51" d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50">
-                <animateTransform 
-                    attributeName="transform" 
-                    attributeType="XML" 
-                    type="rotate"
-                    dur="1s" 
-                    from="0 50 50"
-                    to="360 50 50" 
-                    repeatCount="indefinite" />
-            </path>
-        </svg>
+       <button id="to-disable" class="form-btn" type="submit">Envia</button>
+       <svg class="my-indicator" version="1.1" id="spinner" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+         <path fill="#e76f51" d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50">
+           <animateTransform attributeName="transform" attributeType="XML" type="rotate" dur="1s" from="0 50 50" to="360 50 50" repeatCount="indefinite" />
+         </path>
+       </svg>
      </div>
-     </form>
+   </form>
  </div>

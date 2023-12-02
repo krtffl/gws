@@ -1,19 +1,18 @@
 <div class="memories">
-    {{ if (len .GWSs) }} 
-        {{ range .GWSs }}
-            {{ template "memory" . }}
-        {{ end }}
-    {{ else }}
-    {{ end}}
+  {{ if (len .GWSs) }}
+  {{ range .GWSs }}
+  {{ template "memory" . }}
+  {{ end }}
+  {{ else }}
+  {{ end}}
 </div>
-
 {{ define "memory" }}
-  <div class="memory">
-      <p class="card-msg">De {{ .From}} - {{ .Date.Format "15:04h 02/01/06" }}</p>
-        <p class="card-msg">{{ .Message }}</p>
-        {{ if .Memory }}
-        <img class="preview" src="data:image/png;base64,{{ .Memory }}" alt="record de {{ .From }} i clara">
-        {{ else }}
-        {{ end }}
-    </div>
+<div class="memory">
+  <p class="card-msg">De {{ .From}} - {{ .Date.Format "15:04h 02/01/06" }}</p>
+  <p class="card-msg">{{ .Message }}</p>
+  {{ if .Memory }}
+  <img class="preview" src="data:image/png;base64,{{ .Memory }}" alt="record de {{ .From }} i clara">
+  {{ else }}
+  {{ end }}
+</div>
 {{ end }}

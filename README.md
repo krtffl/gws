@@ -27,7 +27,7 @@ and update your port, database connection parameters and challenges (secret pass
 - run the application and the database
 
 ```bash
-docker-compose up -d 
+make run
 ```
 
 ## usage

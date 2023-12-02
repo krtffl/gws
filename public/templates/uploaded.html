@@ -1,14 +1,12 @@
 <div class="response">
-    <div>
-        el missatge s'ha enviat correctament
-    </div>
-    <div>
-        <p class="card-msg">De {{ .From}}</p>
-        <p class="card-msg">{{ .Message }}</p>
-        {{ if .Memory }}
-        <img class="preview" src="data:image/png;base64,{{ .Memory }}" alt="record de {{ .From }} i clara">
-        {{ else }}
-        {{ end }}
-    </div>
-    <button class="btn" hx-get="/" hx-target="body" hx-boost="true">Torna</button>
+  <div> el missatge s'ha enviat correctament </div>
+  <div>
+    <p class="card-msg">De {{ .From}}</p>
+    <p class="card-msg">{{ .Message }}</p>
+    {{ if .Memory }}
+    <img class="preview" src="data:image/png;base64,{{ .Memory }}" alt="record de {{ .From }} i clara">
+    {{ else }}
+    {{ end }}
+  </div>
+  <button class="btn" hx-get="/" hx-target="body" hx-boost="true">Torna</button>
 </div>
