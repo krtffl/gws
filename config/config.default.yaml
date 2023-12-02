@@ -15,8 +15,8 @@ database:
   host: localhost
   port: 5432
   user: myUser
-  password: myPassword
-  name: databaseName
+  password: postgres
+  name: postgres 
   ssl: disable #require, verify-full, verify-ca, disable  
 
 ##############################################################
@@ -26,3 +26,26 @@ logger:
   format: json 
   level: info 
   path: logs/gws.log 
+
+
+##############################################################
+# Cookie 
+##############################################################
+cookie:
+    # A key with 32 or 64 bytes. 
+    # Used to authenticate values using HMAC.
+  hashKey: very-long-hash-key 
+
+    # The key length must correspond to the block size
+    # of the encryption algorithm. 
+    # For AES, used by default, valid lengths are 16, 24,
+    # or 32 bytes to select AES-128, AES-192, or AES-256.
+    # Used to encrypt values
+  blockKey: very-long-and-very-complex-block
+
+    # Maximum time (in days) that sessions are valid 
+    # after being created
+  expiry: 15
+
+    # Name of the cookie that holds the active session
+  name: session 

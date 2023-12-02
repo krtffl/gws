@@ -1,6 +1,6 @@
 package webui
 
-import "github.com/krtffl/get-well-soon/internal/domain"
+import "github.com/krtffl/gws/internal/domain"
 
 type Service struct {
 	rep domain.GWSRepo
@@ -12,8 +12,8 @@ func NewSvc(rep domain.GWSRepo) *Service {
 	}
 }
 
-func (svc *Service) List() ([]*domain.GWS, error) {
-	return svc.rep.List()
+func (svc *Service) List(limit, offset uint) ([]*domain.GWS, error) {
+	return svc.rep.List(limit, offset)
 }
 
 func (svc *Service) Create(gws *domain.GWS) (*domain.GWS, error) {

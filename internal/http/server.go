@@ -9,8 +9,10 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 
-	"github.com/krtffl/get-well-soon/internal/http/webui"
-	"github.com/krtffl/get-well-soon/internal/logger"
+	"github.com/krtffl/gws/internal/cookie"
+	"github.com/krtffl/gws/internal/http/middlewares"
+	"github.com/krtffl/gws/internal/http/webui"
+	"github.com/krtffl/gws/internal/logger"
 )
 
 type Server struct {
@@ -18,11 +20,13 @@ type Server struct {
 	shutdownFn context.CancelFunc
 	port       uint
 	handler    *webui.Handler
+	cookie     *cookie.Service
 }
 
 func New(
 	port uint,
 	handler *webui.Handler,
+	cookie *cookie.Service,
 ) *Server {
 	ctx, shutdownFn := context.WithCancel(context.Background())
 	return &Server{
@@ -30,6 +34,7 @@ func New(
 		shutdownFn: shutdownFn,
 		port:       port,
 		handler:    handler,
+		cookie:     cookie,
 	}
 }
 
@@ -53,7 +58,12 @@ func (srv *Server) Run() error {
 		r.Get("/form", srv.handler.Form)
 		r.Post("/form", srv.handler.Upload)
 		r.Get("/challenge", srv.handler.Challenge)
-		r.Post("/challenge", srv.handler.SolveChallenge)
+		r.Post("/challenge", srv.handler.Solve)
+	})
+
+	r.Route("/secure", func(r chi.Router) {
+		r.Use(middlewares.Solved(srv.cookie))
+		r.Get("/memories", srv.handler.Memories)
 	})
 
 	fs := http.FileServer(http.Dir("public"))

@@ -11,8 +11,6 @@
       body {
         font-family: 'Roboto', sans-serif;
         background-color: #e7c6ff;
-        margin: 0;
-        padding: 0;
         color: #000814;
         font-size: 26px;
         text-align: center;
@@ -171,7 +169,6 @@
         justify-content: center;
         align-items: center;
         gap: 40px;
-        margin: 20px;
         padding: 20px;
       }
 
@@ -179,20 +176,29 @@
         border: 2px solid #c8b6ff;
         border-radius: 10px;
       }
+
+      .memories-container {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: column;
+        align-items: center;
+      }
+
     </style>
   </head>
   <body>
-    <div id="content">
+    <div id="content" class="memories-container">
       <div class="container">
         <div class="square" hx-get="/form" hx-trigger="click" hx-target=".container">
           <div>vull deixar un missatge per la clara</div>
         </div>
-        <div class="square" hx-get="/challenge" hx-trigger="click" hx-target=".container">
+        <div class="square" hx-get="/secure/memories" hx-trigger="click" hx-target="#content">
           <div>sóc la clara</div>
         </div>
         <img src="public/images/piquetona.png" alt="la clara piquetona" class="piquetona">
+        <img src="public/images/xula.png" alt="la clara xula" class="xula">
       </div>
-      <img src="public/images/xula.png" alt="la clara xula" class="xula">
     </div>
   </body>
 </html>

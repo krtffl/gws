@@ -11,6 +11,6 @@ type GWS struct {
 }
 
 type GWSRepo interface {
-	List() ([]*GWS, error)
+	List(uint, uint) ([]*GWS, error)
 	Create(*GWS) (*GWS, error)
 }

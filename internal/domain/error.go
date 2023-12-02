@@ -12,4 +12,5 @@ const (
 	ForeignKeyError        ErrorMsg = "ForeignKeyPostgreSQLError"
 	NotFoundError          ErrorMsg = "NotFoundPostgreSQLError"
 	UnknownError           ErrorMsg = "UnkwnownPostgreSQLError"
+	InvalidCookieError     ErrorMsg = "InvalidCookieError"
 )

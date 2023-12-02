@@ -11,12 +11,13 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/oxtoacart/bpool"
 
-	getwellsoon "github.com/krtffl/get-well-soon"
-	"github.com/krtffl/get-well-soon/internal/config"
-	"github.com/krtffl/get-well-soon/internal/http"
-	"github.com/krtffl/get-well-soon/internal/http/webui"
-	"github.com/krtffl/get-well-soon/internal/logger"
-	"github.com/krtffl/get-well-soon/internal/repository"
+	getwellsoon "github.com/krtffl/gws"
+	"github.com/krtffl/gws/internal/config"
+	"github.com/krtffl/gws/internal/cookie"
+	"github.com/krtffl/gws/internal/http"
+	"github.com/krtffl/gws/internal/http/webui"
+	"github.com/krtffl/gws/internal/logger"
+	"github.com/krtffl/gws/internal/repository"
 )
 
 type GWS struct {
@@ -38,12 +39,16 @@ func New(cfg *config.Config) *GWS {
 	// A buffer pool is created to safely check template
 	// execution and properly handle the errors
 	bpool := bpool.NewBufferPool(64)
-	handler := webui.NewHandler(svc, bpool, cfg.Challenge)
+	cookie := cookie.New(&cfg.Cookie)
+
+	handler := webui.NewHandler(svc, bpool, cookie, cfg.Challenge)
 
 	httpServer := http.New(
 		cfg.Port,
 		handler,
+		cookie,
 	)
+
 	return &GWS{
 		config:     cfg,
 		httpServer: httpServer,

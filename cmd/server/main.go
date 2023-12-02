@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/krtffl/get-well-soon/internal/api"
-	"github.com/krtffl/get-well-soon/internal/config"
+	"github.com/krtffl/gws/internal/api"
+	"github.com/krtffl/gws/internal/config"
 )
 
 var configPath = flag.String(

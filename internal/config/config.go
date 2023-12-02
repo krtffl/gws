@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/viper"
 
-	getwellsoon "github.com/krtffl/get-well-soon"
-	"github.com/krtffl/get-well-soon/internal/logger"
+	getwellsoon "github.com/krtffl/gws"
+	"github.com/krtffl/gws/internal/logger"
 )
 
 const (
@@ -17,15 +17,11 @@ const (
 )
 
 type Config struct {
-	// Global configuration
 	Port      uint     `mapstructure:"port"      yaml:"port"`
 	Challenge []string `mapstructure:"challenge" yaml:"challenge"`
-
-	// Database configuration
-	Database Database `mapstructure:"database" yaml:"database"`
-
-	// Logger configuration
-	Logger Logger `mapstructure:"logger" yaml:"logger"`
+	Database  Database `mapstructure:"database"  yaml:"database"`
+	Logger    Logger   `mapstructure:"logger"    yaml:"logger"`
+	Cookie    Cookie   `mapstructure:"cookie"    yaml:"cookie"`
 }
 
 type Logger struct {
@@ -41,6 +37,13 @@ type Database struct {
 	Password string `mapstructure:"password" yaml:"password"`
 	Name     string `mapstructure:"name"     yaml:"name"`
 	SSLMode  string `mapstructure:"ssl"      yaml:"ssl"`
+}
+
+type Cookie struct {
+	HashKey  string `mapstructure:"hashKey"  yaml:"hashKey"`
+	BlockKey string `mapstructure:"blockKey" yaml:"blockKey"`
+	Expiry   int32  `mapstructure:"expiry"   yaml:"expiry"`
+	Name     string `mapstructure:"name"     yaml:"name"`
 }
 
 // LoadConfig loads a custom configuration

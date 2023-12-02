@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/krtffl/get-well-soon/internal/domain"
+	"github.com/krtffl/gws/internal/domain"
 )
 
 func getTableName(err error) string {

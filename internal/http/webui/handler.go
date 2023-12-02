@@ -4,14 +4,16 @@ import (
 	"encoding/base64"
 	"io"
 	"net/http"
+	"strconv"
 	"text/template"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/oxtoacart/bpool"
 
-	"github.com/krtffl/get-well-soon/internal/domain"
-	"github.com/krtffl/get-well-soon/internal/logger"
+	"github.com/krtffl/gws/internal/cookie"
+	"github.com/krtffl/gws/internal/domain"
+	"github.com/krtffl/gws/internal/logger"
 )
 
 type Memories struct {
@@ -23,22 +25,30 @@ type Content struct {
 	Message string    `json:"message"`
 	Memory  string    `json:"memory"`
 	Date    time.Time `json:"date"`
+	IsLast  bool      `json:"isLast"`
+	Offset  int       `json:"offset"`
 }
 
 type Handler struct {
 	svc       *Service
 	template  *template.Template
 	bpool     *bpool.BufferPool
+	cookie    *cookie.Service
 	challenge []string
 }
 
-func NewHandler(svc *Service, bpool *bpool.BufferPool, challenge []string) *Handler {
+func NewHandler(
+	svc *Service,
+	bpool *bpool.BufferPool,
+	cookie *cookie.Service,
+	challenge []string,
+) *Handler {
 	tmpls, err := template.New("").ParseGlob("public/templates/*.html")
 	if err != nil {
 		logger.Fatal("[WebuiHandler - Content] - Failed to parse templates. %v", err)
 	}
 
-	return &Handler{template: tmpls, svc: svc, bpool: bpool, challenge: challenge}
+	return &Handler{template: tmpls, svc: svc, bpool: bpool, cookie: cookie, challenge: challenge}
 }
 
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
@@ -74,13 +84,13 @@ func (h *Handler) Form(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Challenge(w http.ResponseWriter, r *http.Request) {
-	logger.Info("[WebuiHandler - Content - Challenge] Incoming request")
+	logger.Info("[WebuiHandler - Content - GetChallenge] Incoming request")
 
 	buf := h.bpool.Get()
 	defer h.bpool.Put(buf)
 
 	if err := h.template.ExecuteTemplate(buf, "challenge.html", nil); err != nil {
-		logger.Error("[WebuiHandler - Content - Challenge] Couldn't execute template. %v", err)
+		logger.Error("[WebuiHandler - Content - GetChallenge] Couldn't execute template. %v", err)
 		h.template.ExecuteTemplate(w, "error.html", nil)
 		return
 	}
@@ -148,7 +158,7 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *Handler) SolveChallenge(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Solve(w http.ResponseWriter, r *http.Request) {
 	logger.Info("[WebuiHandler - Content - SolveChallenge] Incoming request")
 
 	challenge := r.FormValue("challenge")
@@ -172,15 +182,66 @@ func (h *Handler) SolveChallenge(w http.ResponseWriter, r *http.Request) {
 	}
 
 	logger.Info("[WebuiHandler - Content - SolveChallenge] Solved challenge: %s", challenge)
+	c, err := h.cookie.CreateCookie(challenge)
+	if err != nil {
+		logger.Error(
+			"[WebuiHandler - Content - SolveChallenge] Couldn't create cookie. %v",
+			err,
+		)
+		h.template.ExecuteTemplate(w, "error.html", nil)
+		return
+	}
 
-	gwss, err := h.svc.List()
+	http.SetCookie(w, c)
+	http.Redirect(w, r, "/secure/memories", http.StatusFound)
+	return
+}
+
+func (h *Handler) Memories(w http.ResponseWriter, r *http.Request) {
+	logger.Info("[WebuiHandler - Content - Memories] Incoming request")
+
+	challenge, ok := r.Context().Value("challenge").(string)
+	if !ok {
+		logger.Error(
+			"[WebuiHandler - Content - Memories] Couldn't retrieve challenge from context",
+		)
+		http.Redirect(w, r, "/challenge", http.StatusFound)
+		return
+	}
+
+	buf := h.bpool.Get()
+	defer h.bpool.Put(buf)
+
+	if !hasSolved(challenge, h.challenge) {
+		logger.Info("[WebuiHandler - Content - Memories] Failed challenge: %s", challenge)
+		http.Redirect(w, r, "/challenge", http.StatusFound)
+		return
+	}
+
+	offsetString := r.URL.Query().Get("offset")
+	offset := 0
+
+	if offsetString != "" {
+		off, err := strconv.Atoi(offsetString)
+		if err != nil {
+			logger.Error(
+				"[WebuiHandler - Content - Memories] Couldn't parse offset. %v",
+				err,
+			)
+			h.template.ExecuteTemplate(w, "error.html", nil)
+			return
+		}
+		offset = off
+	}
+
+	gwss, err := h.svc.List(5, uint(offset))
 	if err != nil {
 		h.template.ExecuteTemplate(w, "error.html", nil)
 		return
 	}
 
 	var memories []*Content
-	for _, gws := range gwss {
+	for i, gws := range gwss {
 		c := &Content{
 			From:    gws.From,
 			Message: gws.Message,
@@ -190,6 +251,11 @@ func (h *Handler) SolveChallenge(w http.ResponseWriter, r *http.Request) {
 		m := ""
 		if len(gws.Memory) > 0 {
 			m = base64.RawStdEncoding.EncodeToString(gws.Memory)
+		}
+
+		if i == 4 || i == len(gwss)-1 {
+			c.IsLast = true
+			c.Offset = offset + 5
 		}
 
 		c.Memory = m

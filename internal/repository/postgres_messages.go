@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"github.com/krtffl/get-well-soon/internal/domain"
+	"github.com/krtffl/gws/internal/domain"
 )
 
 type gwsRepo struct {
@@ -16,11 +16,12 @@ func NewGWSRepo(db *sql.DB) domain.GWSRepo {
 	}
 }
 
-func (rep *gwsRepo) List() (
+func (rep *gwsRepo) List(limit, ofsset uint) (
 	[]*domain.GWS, error,
 ) {
 	rows, err := rep.db.Query(
-		`SELECT * FROM "Messages" ORDER BY "CreatedAt" DESC`,
+		`SELECT * FROM "Messages" ORDER BY "CreatedAt" DESC LIMIT $1 OFFSET $2`,
+		limit, ofsset,
 	)
 	if err != nil {
 		return nil, handleErrors(err)
