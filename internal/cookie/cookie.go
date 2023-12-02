@@ -16,7 +16,6 @@ func (svc *Service) CreateCookie(session string) (*http.Cookie, error) {
 		Value:    hashed,
 		Expires:  time.Now().AddDate(0, 0, int(svc.cfg.Expiry)),
 		Path:     "/",
-		Secure:   true,
 		HttpOnly: true,
 	}
 
