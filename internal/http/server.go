@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 
+	"github.com/krtffl/gws"
 	"github.com/krtffl/gws/internal/cookie"
 	"github.com/krtffl/gws/internal/http/middlewares"
 	"github.com/krtffl/gws/internal/http/webui"
@@ -66,8 +67,10 @@ func (srv *Server) Run() error {
 		r.Get("/memories", srv.handler.Memories)
 	})
 
-	fs := http.FileServer(http.Dir("public"))
-	r.Handle("/public/*", http.StripPrefix("/public/", fs))
+	r.Handle(
+		"/public/*",
+		http.StripPrefix("/public/", http.FileServer(http.FS(gws.Public))),
+	)
 
 	httpServer := &http.Server{
 		Addr:    fmt.Sprintf(":%d", srv.port),

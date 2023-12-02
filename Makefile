@@ -5,10 +5,10 @@ BRANCH := $(shell git show-ref | grep "$(REVISION)" | grep -v HEAD | awk '{print
 MODULE_NAME := $(shell cat go.mod | head -n 1 | cut -d " " -f2- | cut -d "/" -f2-)
 BASE_DIR := $(PWD)
 
-GO_LDFLAGS ?= -X github.com/krtffl/get-well-soon/internal/version.Version=$(VERSION) \
-			-X github.com/krtffl/get-well-soon/internal/version.Branch=$(BRANCH) \
-			-X github.com/krtffl/get-well-soon/internal/version.Revision=$(REVISION) \
-			-X github.com/krtffl/get-well-soon/internal/version.Built=$(BUILT) \
+GO_LDFLAGS ?= -X github.com/krtffl/gws/internal/version.Version=$(VERSION) \
+			-X github.com/krtffl/gws/internal/version.Branch=$(BRANCH) \
+			-X github.com/krtffl/gws/internal/version.Revision=$(REVISION) \
+			-X github.com/krtffl/gws/internal/version.Built=$(BUILT) \
 			-s \
 			-w
 

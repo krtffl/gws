@@ -1,4 +1,4 @@
-package getwellsoon
+package gws
 
 import (
 	"embed"
