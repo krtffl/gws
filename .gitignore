@@ -27,3 +27,6 @@ config/config.yaml
 
 /dist
 /out
+
+/public/images
+/public/favicon.ico
