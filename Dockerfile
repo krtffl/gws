@@ -15,7 +15,6 @@ FROM ubuntu:20.04
 RUN apt-get update && apt-get install -y ca-certificates
 
 COPY --from=builder /app/out/* /app/
-COPY ./public /app/public
 
 WORKDIR /app
 

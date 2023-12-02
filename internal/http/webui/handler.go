@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/oxtoacart/bpool"
 
+	getwellsoon "github.com/krtffl/gws"
 	"github.com/krtffl/gws/internal/cookie"
 	"github.com/krtffl/gws/internal/domain"
 	"github.com/krtffl/gws/internal/logger"
@@ -43,7 +44,7 @@ func NewHandler(
 	cookie *cookie.Service,
 	challenge []string,
 ) *Handler {
-	tmpls, err := template.New("").ParseGlob("public/templates/*.html")
+	tmpls, err := template.New("").ParseFS(getwellsoon.Public, "public/templates/*.html")
 	if err != nil {
 		logger.Fatal("[WebuiHandler - Content] - Failed to parse templates. %v", err)
 	}

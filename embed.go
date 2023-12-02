@@ -12,3 +12,6 @@ var DefaultConfig []byte
 
 //go:embed migrations
 var Migrations embed.FS
+
+//go:embed public
+var Public embed.FS
